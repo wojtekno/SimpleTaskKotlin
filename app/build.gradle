@@ -36,4 +36,23 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    //rxjava
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.5'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+
+    //room
+    implementation 'androidx.room:room-runtime:2.3.0-alpha02'
+//    implementation "io.reactivex.rxjava2:rxjava:2.2.19"
+
+    //ld
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
+
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
+    testImplementation("io.strikt:strikt-core:0.26.1")
+
+//    implementation io.reactivex.rxjava3.kotlin.subscribeBy
+    implementation("io.reactivex.rxjava3:rxkotlin:3.0.0")
+    implementation "androidx.lifecycle:lifecycle-reactivestreams:2.2.0"
+    testImplementation 'android.arch.core:core-testing:1.1.1'
+
 }
