@@ -1,8 +1,8 @@
 package com.example.simpletask_kotlin.domain
 
-import com.example.simpletask_kotlin.data.TaskViewData
+import com.example.simpletask_kotlin.data.ui.TaskViewData
 import io.reactivex.rxjava3.core.Observable
 
-interface getAllTasksUseCase {
+interface GetAllTasksUseCase {
     fun getAllTasks(): Observable<List<TaskViewData>>
 }
