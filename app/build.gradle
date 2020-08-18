@@ -22,6 +22,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildFeatures {
+        dataBinding true
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
 }
 
 dependencies {
@@ -54,5 +63,8 @@ dependencies {
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.0")
     implementation "androidx.lifecycle:lifecycle-reactivestreams:2.2.0"
     testImplementation 'android.arch.core:core-testing:1.1.1'
+
+
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
 
 }

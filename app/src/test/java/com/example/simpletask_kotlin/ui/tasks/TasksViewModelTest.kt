@@ -20,7 +20,7 @@ class TasksViewModelTest {
     val rule = InstantTaskExecutorRule()
 
     @Test
-    fun `given repository hasn't emitted value yet when initializing viewModel then state is InProgress`() {
+    fun `given getAllTasksUseCase hasn't emitted value yet when initializing viewModel then state is InProgress`() {
         val viewModel = createViewModel(mock {
             on { getAllTasks() } doReturn Observable.never()
         })
@@ -29,18 +29,17 @@ class TasksViewModelTest {
     }
 
     @Test
-    fun `given repository emitted error when initializing viewModel then state is Error`() {
+    fun `given getAllTasksUseCase emitted error when initializing viewModel then state is Error`() {
         val mockThrowable = Throwable("some error")
         val viewModel = createViewModel(mock {
             on { getAllTasks() } doReturn Observable.error(mockThrowable)
         })
 
-
         expectThat(viewModel.uiState.value).isEqualTo(Error(mockThrowable.message))
     }
 
     @Test
-    fun `given repository emitted empty list when initializing viewModel then state is NoData`() {
+    fun `given getAllTasksUseCase emitted empty list when initializing viewModel then state is NoData`() {
         val emptyList = emptyList<TaskViewData>()
         val viewModel = createViewModel(mock {
             on { getAllTasks() } doReturn Observable.just(emptyList)
@@ -50,7 +49,7 @@ class TasksViewModelTest {
     }
 
     @Test
-    fun `given repository emitted data when initializing viewModel then state is Success`() {
+    fun `given getAllTasksUseCase emitted data when initializing viewModel then state is Success`() {
         val mockTasks = listOf(
             TaskViewData(1, "first task", Status.OPEN)
         )
@@ -61,38 +60,37 @@ class TasksViewModelTest {
         expectThat(viewModel.uiState.value).isEqualTo(Success(mockTasks))
     }
 
+    @Test
+    fun `given getAllTasksUseCase emitted data multiple times when initializing viewModel then state is Success with the most recent data`() {
+        val mockTasks = listOf(
+            TaskViewData(1, "first task", Status.OPEN)
+        )
+        val mockTasks2 = listOf(
+            TaskViewData(1, "first task", Status.OPEN),
+            TaskViewData(2, "task 2", Status.OPEN),
+            TaskViewData(3, "task 3", Status.OPEN)
+        )
+        val mockTasks3 = listOf(
+            TaskViewData(1, "task 1", Status.OPEN),
+            TaskViewData(4, "task 4", Status.OPEN)
+        )
+        val viewModel = createViewModel(mock {
+            on { getAllTasks() } doReturn Observable.create { emitter ->
+                emitter.onNext(mockTasks)
+                emitter.onNext(mockTasks2)
+                emitter.onNext(mockTasks3)
+            }
+        })
 
-//    @Test
-//    fun `given repository emits value when initializing viewModel then set tasks`() {
-//
-//        val mockTasks = listOf(
-//            TaskViewData(
-//                1,
-//                "first task",
-//                Status.OPEN
-//            )
-//        )
-//        val viewModel = createViewModel(mock {
-//            on { getAllTasks() } doReturn Observable.just(mockTasks)
-//        })
-//
-//        expectThat(viewModel.tasks.value).isEqualTo(mockTasks)
-//        expectThat(viewModel.errorMessage.value).isEqualTo(null)
-//    }
+        expectThat(viewModel.uiState.value).isEqualTo(Success(mockTasks3))
+    }
 
 
-//    @Test
-//    fun `given repository emits error when initializing viewModel then show error`() {
-//
-//        val mockThrowable = Throwable("some error")
-//        val viewModel = createViewModel(mock {
-//            on { getAllTasks() } doReturn Observable.error(mockThrowable)
-//        })
-//
-//        expectThat(viewModel.tasks.value).isEqualTo(null)
-//        expectThat(viewModel.errorMessage.value).isEqualTo(mockThrowable.message)
-//    }
-
+    @Test
+    fun `given getAllTasksUseCase hasn't completed yet when viewModel onCleared invoked then dispose the observable`() {
+        //todo implement test - how to test onCleared and disposable?
+        assert(false)
+    }
 
     private fun createViewModel(
         getAllTasksUseCase: GetAllTasksUseCase = mock {
@@ -105,4 +103,5 @@ class TasksViewModelTest {
     ): TasksViewModel {
         return TasksViewModel(getAllTasksUseCase, schedulerProvider)
     }
+
 }
