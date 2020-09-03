@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SimpleTask_kotlin</string>
+    <string name="cannot_work_on_tasks_simultaneously">You can\'t work on two tasks simultaneously</string>
+    <string name="status_change_to_travelling">Status changed to TRAVELLING</string>
+    <string name="status_change_to_working">Status changed to WORKING</string>
+    <string name="status_change_to_available">Status changed to AVAILABLE</string>
+    <string name="test_btn_clicked_text">Test button clicked</string>
 </resources>

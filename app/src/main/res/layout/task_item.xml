@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="task"
+            type="com.example.simpletask_kotlin.data.ui.TaskViewData" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp">
+
+        <TextView
+            android:id="@+id/task_id_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(task.id)}"
+            app:layout_constraintStart_toStartOf="@id/task_name_tv"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="1234" />
+
+        <TextView
+            android:text="@{task.name}"
+            android:id="@+id/task_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/task_id_tv"
+            tools:text="Write some good code" />
+
+        <TextView
+            android:id="@+id/task_status_tv"
+            android:text="@{task.status.name()}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/task_name_tv"
+            tools:text="In Progress"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

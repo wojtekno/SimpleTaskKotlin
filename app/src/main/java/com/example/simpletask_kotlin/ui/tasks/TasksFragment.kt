@@ -4,17 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simpletask_kotlin.MyApplication
-import com.example.simpletask_kotlin.data.ui.Error
-import com.example.simpletask_kotlin.data.ui.InProgress
+import com.example.simpletask_kotlin.R
 import com.example.simpletask_kotlin.data.ui.Success
-import com.example.simpletask_kotlin.data.ui.TasksDisplayable
+import com.example.simpletask_kotlin.data.ui.TasksUiState
 import com.example.simpletask_kotlin.databinding.MainFragmentBinding
+import com.github.ajalt.timberkt.Timber
 
-class TasksFragment : Fragment() {
+class TasksFragment : Fragment(), TasksAdapter.OnTaskClickListener {
 
     companion object {
         fun newInstance() = TasksFragment()
@@ -22,14 +25,23 @@ class TasksFragment : Fragment() {
 
     private lateinit var viewModel: TasksViewModel
     private lateinit var binding: MainFragmentBinding
+    private lateinit var adapter: TasksAdapter
+    private lateinit var toast: Toast
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = MainFragmentBinding.inflate(inflater)
+        binding = MainFragmentBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-//        return inflater.inflate(R.layout.main_fragment, container, false)
+        adapter = TasksAdapter(this)
+        binding.tasksRv.adapter = adapter
+        binding.tasksRv.layoutManager = LinearLayoutManager(context)
+        toast = Toast(context)
+        binding.testBt.setOnClickListener {
+            showToast(R.string.test_btn_clicked_text)
+        }
+
         return binding.root
     }
 
@@ -38,19 +50,25 @@ class TasksFragment : Fragment() {
         val viewModelFactory =
             (requireActivity().application as MyApplication).appGraph.tasksViewModelFactory
         viewModel = ViewModelProvider(this, viewModelFactory).get(TasksViewModel::class.java)
-        viewModel.uiState.observe(viewLifecycleOwner, Observer<TasksDisplayable> {
-            binding.errorMessageTv.text = when (it) {
-                is Success -> "success"
-                is InProgress -> "in progress"
-                is Error -> "error"
-                else -> "other scenario"
-            }
-
+        binding.vm = viewModel
+        viewModel.uiState.observe(viewLifecycleOwner, Observer<TasksUiState> {
             when (it) {
-                is InProgress -> binding.progressBar.visibility = View.VISIBLE
-                else -> binding.progressBar.visibility = View.INVISIBLE
+                is Success -> adapter.submitList(it.tasks)
             }
         })
+        viewModel.statusChangeMessage().observe(viewLifecycleOwner) { message ->
+            message?.let { showToast(it) }
+        }
+    }
+
+    override fun onItemClick(listIndex: Int) {
+        viewModel.onTaskClicked(listIndex)
+    }
+
+    private fun showToast(resId: Int, duration: Int = Toast.LENGTH_SHORT) {
+        toast.cancel()
+        toast = Toast.makeText(context, resId, duration)
+        toast.show()
     }
 
 }
